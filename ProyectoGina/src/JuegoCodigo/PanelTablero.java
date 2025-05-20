@@ -1,49 +1,70 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package JuegoCodigo;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import JuegoGrafico.Juego;
+import java.awt.*;
+import javax.swing.*;
 
-/**
- *
- * @author manue
- */
-//para crear el tablero
 public class PanelTablero extends JPanel {
+    private JButton[] botones = new JButton[24]; // Los 24 botones
+    public static JButton aleatorio = new JButton("Personaje aleatorio"); // botón aleatorio
+    public static JButton avanzar=new JButton("Avanzar");//boton para pasar al juego ya pa jugar
 
-    public PanelTablero(String[] imagenes) {
-        setLayout(new GridLayout(6, 4, 100, 10)); // 6 filas x 4 columnas y los otros dos son el espacio entre imagenes (x,y)
+    public PanelTablero(String[] rutasImagenes) {
+        setLayout(new BorderLayout()); // Layout general del panel principal
 
-        for (String ruta : imagenes) {
-            JPanel celda = new JPanel(new BorderLayout());
+        // Panel para el botón aleatorio (centrado arriba)
+        JPanel panelSuperior = new JPanel();
+        panelSuperior.setLayout(new FlowLayout(FlowLayout.CENTER)); // Centra el botón
+        panelSuperior.add(aleatorio);
+        add(panelSuperior, BorderLayout.NORTH);
+        
+        // Panel para el botón avanzar (medio derecha)
+        JPanel panelInferior = new JPanel();
+        panelInferior.setLayout(new FlowLayout(FlowLayout.RIGHT)); // Centra el botón
+        panelInferior.add(avanzar);
+        add(panelInferior, BorderLayout.EAST);
 
-            java.net.URL url = getClass().getResource(ruta);
+        // Panel para los 24 botones de personajes
+        JPanel panelBotones = new JPanel(new GridLayout(6, 4, 120, 8));
+        for (int i = 0; i < 24; i++) {
+            JButton boton = new JButton();
+
+            java.net.URL url = getClass().getResource(rutasImagenes[i]);
             if (url != null) {
-                ImageIcon iconoOriginal = new ImageIcon(url);
-    
-                // Escalar la imagen a 100x100 (ajusta el tamaño a tu gusto)
-                Image imagenEscalada = iconoOriginal.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-                ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
-
-                JLabel labelImagen = new JLabel(iconoEscalado);
-                labelImagen.setHorizontalAlignment(JLabel.CENTER);
-                celda.add(labelImagen, BorderLayout.CENTER);
-
-                String nombre = ruta.substring(ruta.lastIndexOf("/") + 1);
-                JLabel labelTexto = new JLabel(nombre, JLabel.CENTER);
-                celda.add(labelTexto, BorderLayout.SOUTH);
+                ImageIcon icono = new ImageIcon(url);
+                Image imagen = icono.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+                boton.setIcon(new ImageIcon(imagen));
             } else {
-                celda.add(new JLabel("Imagen no encontrada", JLabel.CENTER));
+                boton.setText("Imagen no encontrada");
             }
 
-            add(celda);
+            String nombre = rutasImagenes[i].substring(rutasImagenes[i].lastIndexOf("/") + 1);
+            nombre = nombre.replace(".png", "");
+            boton.setText(nombre);
+
+            boton.setHorizontalTextPosition(JButton.CENTER);
+            boton.setVerticalTextPosition(JButton.BOTTOM);
+
+            final String nombreJugador = nombre; // variable final para usar dentro del lambda
+            boton.addActionListener(e -> {
+                Juego.jugadorAle = nombreJugador;
+                Juego.MJ.mostrarJugador("Seleccionaste a: ");
+                //System.out.println(Juego.jugadorAle);
+            });
+
+            botones[i] = boton;
+            panelBotones.add(boton);
         }
+
+        // Añadir el panel de botones al centro del panel principal
+        add(panelBotones, BorderLayout.CENTER);
+    }
+
+    public JButton[] getBotones() {
+        return botones;
+    }
+
+    public JButton getBotonAleatorio() {
+        return aleatorio;
     }
 }

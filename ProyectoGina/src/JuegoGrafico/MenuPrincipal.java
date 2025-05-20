@@ -4,19 +4,31 @@
  */
 package JuegoGrafico;
 
+import JuegoCodigo.Code;
+import JuegoCodigo.Musica;
+import JuegoCodigo.PanelTablero;
 import java.awt.BorderLayout;
+import java.util.Random;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
  * @author manue
  */
 public class MenuPrincipal extends javax.swing.JFrame {
-
+    private JPanel panelCentral;
+    public static Musica musica=new Musica();
+    int cont;
     /**
      * Creates new form MenuPrincipal
      */
     public MenuPrincipal() {
         initComponents();
+        
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);//para que se abra en pantalla completa
+
+        musica.reproducir("/Sonido/RatDance.wav");
     }
 
     /**
@@ -122,6 +134,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     
     //BOTON DE SALIR
     private void SalirBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirBotonActionPerformed
+        musica.pausar();
         dispose();//Se cierra solo ese Jframe
     }//GEN-LAST:event_SalirBotonActionPerformed
     //BOTON DE CREDITOS
@@ -149,13 +162,35 @@ public class MenuPrincipal extends javax.swing.JFrame {
         this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
         this.getContentPane().add(new Juego(), BorderLayout.CENTER); // Agrega el panel
         this.revalidate();                                       // Actualiza el layout
-        this.repaint();  
+        this.repaint();
+        
+        //Se pone el boton aqui porque de otra manera se acciona dos veces ya que se manda a llamar Juego 
+        Random rand=new Random();//para generar un numero random
+        PanelTablero.aleatorio.addActionListener(e->{
+            int numale=rand.nextInt(24);//genera un numero entre 0-23
+            Juego.jugadorAle=Code.imagenestablero[numale];//le guardamos a la variable el nombre del jugador que toco
+            Juego.jugadorAle=Juego.jugadorAle.replace("/JugadoresProyecto/", "").replace(".png", "");//se le quita lo que no es el nombre del jugador
+            Juego.MJ.mostrarJugador("Tu jugador es: ");
+            //System.out.println(Juego.jugadorAle);
+        });//Boton para seleccionar un jugador en aleatorio
+        
+        //Boton que hace que avances para ya jugar
+        PanelTablero.avanzar.addActionListener(e->{
+            JuegoPrincipal JP=new JuegoPrincipal();
+            this.getContentPane().removeAll();                       // Limpia lo anterior
+            this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
+            this.getContentPane().add(new Juego(), BorderLayout.CENTER); // Agrega el panel
+            this.revalidate();                                       // Actualiza el layout
+            this.repaint();
+        });//Boton para avanzar
     }//GEN-LAST:event_JugarBotonActionPerformed
 
     private void ControlMusicaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ControlMusicaBotonActionPerformed
         if (ControlMusicaBoton.isSelected()) {
+            musica.pausar();
             ControlMusicaBoton.setText("▶");
         } else {
+            musica.continuar();
             ControlMusicaBoton.setText("⏸");
     }
     }//GEN-LAST:event_ControlMusicaBotonActionPerformed

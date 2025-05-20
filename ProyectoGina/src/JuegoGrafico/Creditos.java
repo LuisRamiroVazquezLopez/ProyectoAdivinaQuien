@@ -67,10 +67,14 @@ public class Creditos extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void VolverBotonPanel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VolverBotonPanel1ActionPerformed
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // obtener JFrame padre
-        frame.dispose();//cierra el panel actual
-        MenuPrincipal menuprincipal=new MenuPrincipal();
-        menuprincipal.show();//abre el panel del menu
+        // Cierra la ventana actual completamente
+        MenuPrincipal.musica.pausar();//para que no se duplique el sonido
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.dispose(); // Cierra el JFrame actual
+
+        // Crea un nuevo JFrame con el menú principal
+        MenuPrincipal nuevoMenu = new MenuPrincipal();
+        nuevoMenu.setVisible(true); // Muestra el nuevo menú con todo correctamente configurado
     }//GEN-LAST:event_VolverBotonPanel1ActionPerformed
 
 

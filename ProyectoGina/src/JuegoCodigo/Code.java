@@ -4,14 +4,11 @@
  */
 package JuegoCodigo;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import JuegoGrafico.Juego;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 
 
 /**
@@ -24,13 +21,14 @@ public class Code {
     
     //Funcion para cargar las imagenes de manera manual
     public void cargarImagenes(){
+        imagenes.clear(); // LIMPIA antes de volver a cargar
         imagenes.add("/JugadoresProyecto/Andres Iniesta.png");
         imagenes.add("/JugadoresProyecto/Cannavaro.png");
         imagenes.add("/JugadoresProyecto/Carlos Vela.png");
         imagenes.add("/JugadoresProyecto/Cristiano Ronaldo.png");
         imagenes.add("/JugadoresProyecto/Drogba.png");
         imagenes.add("/JugadoresProyecto/Gerson Oliveira.png");
-        imagenes.add("/JugadoresProyecto/Giovanni Dos Santos.png");
+        imagenes.add("/JugadoresProyecto/Giovani Dos Santos.png");
         imagenes.add("/JugadoresProyecto/Gullit P.png");
         imagenes.add("/JugadoresProyecto/Harry Kane.png");
         imagenes.add("/JugadoresProyecto/Hector Herrera.png");
@@ -66,6 +64,10 @@ public class Code {
         for(int i=0;i<24;i++){
             imagenestablero[i]=imagenes.get(i);//Se guarda el jugador de la posicion i de la lista en la posicion i del vector
         }
+    }
+    
+    public void mostrarJugador(String mensaje){//se le manda un mensaje para poner antes del jugador, seleccionaste o te toco
+        JOptionPane.showMessageDialog(null, mensaje + Juego.jugadorAle);
     }
 }
 

@@ -46,27 +46,28 @@ public class Instrucciones extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(375, Short.MAX_VALUE)
+                .addContainerGap(377, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(VolverBotonPanel2)
                         .addGap(88, 88, 88))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addContainerGap(429, Short.MAX_VALUE))))
+                        .addContainerGap(430, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(67, 67, 67)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 341, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 338, Short.MAX_VALUE)
                 .addComponent(VolverBotonPanel2)
                 .addGap(49, 49, 49))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void VolverBotonPanel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VolverBotonPanel2ActionPerformed
+        MenuPrincipal.musica.pausar();//para que no se duplique el sonido
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // obtener JFrame padre
         frame.dispose();//cierra el panel actual
         MenuPrincipal menuprincipal=new MenuPrincipal();

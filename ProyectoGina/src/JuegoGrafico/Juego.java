@@ -13,13 +13,12 @@ import javax.swing.JPanel;
  * @author manue
  */
 public class Juego extends javax.swing.JPanel {
-
+    public static String jugadorAle=new String();//variable que guarda el jugador que se genero de forma aleatoria
+    public static Code MJ=new Code();//objeto para mandar a llamar metodo de mostrar jugador, lo hacemos de acceso publico para no batallar
     /**
      * Creates new form Juego
      */
     public Juego() {
-        initComponents();
-        
         initComponents();
 
         // Cargar imágenes y llenar el tablero
@@ -29,12 +28,14 @@ public class Juego extends javax.swing.JPanel {
 
         // Crear panel del tablero con las 24 imágenes
         PanelTablero tablero = new PanelTablero(Code.imagenestablero);
+        
+        
 
         // Establecer el layout principal del JFrame
         this.setLayout(new java.awt.BorderLayout());
 
-        // Crear un panel auxiliar para alinear el tablero a la izquierda
-        JPanel surIzquierda = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+        // Crear un panel auxiliar para alinear el tablero al centro
+        JPanel surIzquierda = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
         surIzquierda.add(tablero);
 
         // Agregar el panel auxiliar al SUR del BorderLayout
@@ -54,11 +55,11 @@ public class Juego extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 773, Short.MAX_VALUE)
+            .addGap(0, 975, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 543, Short.MAX_VALUE)
+            .addGap(0, 641, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
