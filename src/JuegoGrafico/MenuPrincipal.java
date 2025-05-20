@@ -173,6 +173,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
             Juego.MJ.mostrarJugador("Tu jugador es: ");
             //System.out.println(Juego.jugadorAle);
         });//Boton para seleccionar un jugador en aleatorio
+        
+        //Boton que hace que avances para ya jugar
+        PanelTablero.avanzar.addActionListener(e->{
+            JuegoPrincipal JP=new JuegoPrincipal();
+            this.getContentPane().removeAll();                       // Limpia lo anterior
+            this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
+            this.getContentPane().add(new Juego(), BorderLayout.CENTER); // Agrega el panel
+            this.revalidate();                                       // Actualiza el layout
+            this.repaint();
+        });//Boton para avanzar
     }//GEN-LAST:event_JugarBotonActionPerformed
 
     private void ControlMusicaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ControlMusicaBotonActionPerformed

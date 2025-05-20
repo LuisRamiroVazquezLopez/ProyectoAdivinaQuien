@@ -7,7 +7,7 @@ import javax.swing.*;
 public class PanelTablero extends JPanel {
     private JButton[] botones = new JButton[24]; // Los 24 botones
     public static JButton aleatorio = new JButton("Personaje aleatorio"); // botón aleatorio
-    private JButton avanzar=new JButton("Avanzar");//boton para pasar al juego ya pa jugar
+    public static JButton avanzar=new JButton("Avanzar");//boton para pasar al juego ya pa jugar
 
     public PanelTablero(String[] rutasImagenes) {
         setLayout(new BorderLayout()); // Layout general del panel principal
@@ -17,6 +17,12 @@ public class PanelTablero extends JPanel {
         panelSuperior.setLayout(new FlowLayout(FlowLayout.CENTER)); // Centra el botón
         panelSuperior.add(aleatorio);
         add(panelSuperior, BorderLayout.NORTH);
+        
+        // Panel para el botón avanzar (medio derecha)
+        JPanel panelInferior = new JPanel();
+        panelInferior.setLayout(new FlowLayout(FlowLayout.RIGHT)); // Centra el botón
+        panelInferior.add(avanzar);
+        add(panelInferior, BorderLayout.EAST);
 
         // Panel para los 24 botones de personajes
         JPanel panelBotones = new JPanel(new GridLayout(6, 4, 120, 8));
