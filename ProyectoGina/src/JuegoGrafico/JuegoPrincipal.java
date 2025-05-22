@@ -18,7 +18,8 @@ public class JuegoPrincipal extends javax.swing.JFrame {
      */
     public JuegoPrincipal() {
         initComponents();
-        PanelTablero tablero = new PanelTablero(Code.imagenestablero);
+        PanelTablero tablero = new PanelTablero();
+        tablero.PTJuego(Code.imagenestablero);
     }
 
     /**

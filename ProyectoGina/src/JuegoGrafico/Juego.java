@@ -35,7 +35,8 @@ public class Juego extends javax.swing.JPanel {
         code.llenarVector();
 
         // Crear panel del tablero con las 24 imágenes
-        PanelTablero tablero = new PanelTablero(Code.imagenestablero);
+        PanelTablero tablero = new PanelTablero();
+        tablero.PTSelec(Code.imagenestablero);//Se llama al PTSelec el cual imprime acomoda el panel del tablero de seleccion
         
         
 
@@ -51,14 +52,14 @@ public class Juego extends javax.swing.JPanel {
     }
     
     public void tablarepite(){//Funcion para imprimir la tabla sin que se sorteen los jugadores de nuevo y solo se imprima la tabla como ya estaba
-        PanelTablero tablero = new PanelTablero(Code.imagenestablero);
-        
+        PanelTablero tablero = new PanelTablero();
+        tablero.PTJuego(Code.imagenestablero);        
         
 
         // Establecer el layout principal del JFrame
         this.setLayout(new java.awt.BorderLayout());
 
-        // Crear un panel auxiliar para alinear el tablero al centro
+        // Crear un panel auxiliar para alinear el tablero a la izquierda
         JPanel surIzquierda = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
         surIzquierda.add(tablero);
 
