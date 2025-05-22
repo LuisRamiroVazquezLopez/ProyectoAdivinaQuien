@@ -18,9 +18,17 @@ public class Juego extends javax.swing.JPanel {
     /**
      * Creates new form Juego
      */
-    public Juego() {
+    public Juego(boolean flag) {
         initComponents();
-
+        if(flag==true){
+            tablaorigin();
+        }else{
+           tablarepite();
+        }
+    }
+    
+    public void tablaorigin(){//funcion para imprimir el primer tablero y que se genere todo
+        
         // Cargar imágenes y llenar el tablero
         Code code = new Code();
         code.cargarImagenes();
@@ -41,7 +49,22 @@ public class Juego extends javax.swing.JPanel {
         // Agregar el panel auxiliar al SUR del BorderLayout
         this.add(surIzquierda, java.awt.BorderLayout.SOUTH);
     }
+    
+    public void tablarepite(){//Funcion para imprimir la tabla sin que se sorteen los jugadores de nuevo y solo se imprima la tabla como ya estaba
+        PanelTablero tablero = new PanelTablero(Code.imagenestablero);
+        
+        
 
+        // Establecer el layout principal del JFrame
+        this.setLayout(new java.awt.BorderLayout());
+
+        // Crear un panel auxiliar para alinear el tablero al centro
+        JPanel surIzquierda = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+        surIzquierda.add(tablero);
+
+        // Agregar el panel auxiliar al SUR del BorderLayout
+        this.add(surIzquierda, java.awt.BorderLayout.SOUTH);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

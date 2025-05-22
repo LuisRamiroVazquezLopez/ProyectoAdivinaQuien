@@ -157,10 +157,10 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_InstruccionesBotonActionPerformed
 
     private void JugarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JugarBotonActionPerformed
-        Juego juego= new Juego();//creamos un obejot para enseñar el panel de juego
+        Juego juego= new Juego(true);//creamos un obejot para enseñar el panel de juego
         this.getContentPane().removeAll();                       // Limpia lo anterior
         this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
-        this.getContentPane().add(new Juego(), BorderLayout.CENTER); // Agrega el panel
+        this.getContentPane().add(new Juego(true), BorderLayout.CENTER); // Agrega el panel
         this.revalidate();                                       // Actualiza el layout
         this.repaint();
         
@@ -172,14 +172,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
             Juego.jugadorAle=Juego.jugadorAle.replace("/JugadoresProyecto/", "").replace(".png", "");//se le quita lo que no es el nombre del jugador
             Juego.MJ.mostrarJugador("Tu jugador es: ");
             //System.out.println(Juego.jugadorAle);
-        });//Boton para seleccionar un jugador en aleatorio
+        });//Boton para seleccionar un jugador en aleatorio}
+        
+        
         
         //Boton que hace que avances para ya jugar
         PanelTablero.avanzar.addActionListener(e->{
             JuegoPrincipal JP=new JuegoPrincipal();
             this.getContentPane().removeAll();                       // Limpia lo anterior
             this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
-            this.getContentPane().add(new Juego(), BorderLayout.CENTER); // Agrega el panel
+            this.getContentPane().add(new Juego(false), BorderLayout.CENTER); // Agrega el panel
             this.revalidate();                                       // Actualiza el layout
             this.repaint();
         });//Boton para avanzar

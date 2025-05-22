@@ -14,13 +14,13 @@ public class PanelTablero extends JPanel {
 
         // Panel para el botón aleatorio (centrado arriba)
         JPanel panelSuperior = new JPanel();
-        panelSuperior.setLayout(new FlowLayout(FlowLayout.CENTER)); // Centra el botón
+        panelSuperior.setLayout(new FlowLayout(FlowLayout.CENTER)); // Centra el botó  n
         panelSuperior.add(aleatorio);
         add(panelSuperior, BorderLayout.NORTH);
         
         // Panel para el botón avanzar (medio derecha)
         JPanel panelInferior = new JPanel();
-        panelInferior.setLayout(new FlowLayout(FlowLayout.RIGHT)); // Centra el botón
+        panelInferior.setLayout(new FlowLayout(FlowLayout.RIGHT));
         panelInferior.add(avanzar);
         add(panelInferior, BorderLayout.EAST);
 
