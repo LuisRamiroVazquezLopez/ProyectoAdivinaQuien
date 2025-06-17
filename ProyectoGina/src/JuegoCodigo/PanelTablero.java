@@ -10,6 +10,7 @@ public class PanelTablero extends JPanel {
     public static JButton avanzar=new JButton("Avanzar");//boton para pasar al juego ya pa jugar
 
     public void PTSelec(String[] rutasImagenes) {//Funcion para imprimir el tablero de la seleccion de personaje conforme a lo que se necesita en este
+        removeAll();
         setLayout(new BorderLayout()); // Layout general del panel principal
 
         // Panel para el botón aleatorio (centrado arriba)
@@ -58,10 +59,15 @@ public class PanelTablero extends JPanel {
 
         // Añadir el panel de botones al centro del panel principal
         add(panelBotones, BorderLayout.CENTER);
+        revalidate(); 
+        repaint(); 
     }
     
     public void PTJuego(String[] rutasImagenes) {//Funcion para imprimir el tablero del juego y lo que se necesita
+        removeAll(); // limpia lo anterior
         setLayout(new BorderLayout()); // Layout general del panel principal
+       
+        
 
         // Panel para los 24 botones de personajes
         JPanel panelBotones = new JPanel(new GridLayout(6, 4, 120, 8));
@@ -97,6 +103,8 @@ public class PanelTablero extends JPanel {
 
         // Añadir el panel de botones al centro del panel principal
         add(panelBotones, BorderLayout.CENTER);
+        revalidate(); 
+        repaint(); 
     }
     
 
@@ -107,4 +115,9 @@ public class PanelTablero extends JPanel {
     public JButton getBotonAleatorio() {
         return aleatorio;
     }
+    
+    public JButton getBotonAvanzar() {
+    return avanzar;
+    }
+    
 }

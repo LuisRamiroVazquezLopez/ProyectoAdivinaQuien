@@ -13,6 +13,7 @@ import javax.sound.sampled.*;
 public class Musica {
     private Clip clip;
     private long posicionPausada = 0;
+    public static boolean flag=true; //bandera para ver si la musica esta en reproduccion o no
 
     public void reproducir(String ruta) {
         try {
@@ -38,5 +39,9 @@ public class Musica {
             clip.setMicrosecondPosition(posicionPausada);//se le pone donde se empieza a reproducir
             clip.start();//se reproduce
         }
+    }
+    
+    public boolean estaReproduciendo() {
+        return clip != null && clip.isRunning();
     }
 }

@@ -20,6 +20,8 @@ public class JuegoPrincipal extends javax.swing.JFrame {
         initComponents();
         PanelTablero tablero = new PanelTablero();
         tablero.PTJuego(Code.imagenestablero);
+        this.setLayout(new java.awt.BorderLayout()); // aseguramos que sea el layout correcto
+        this.add(tablero, java.awt.BorderLayout.CENTER); // agregamos el panel al frame
     }
 
     /**

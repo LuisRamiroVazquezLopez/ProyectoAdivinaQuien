@@ -3,11 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package JuegoGrafico;
-
 import JuegoCodigo.Code;
 import JuegoCodigo.PanelTablero;
-import javax.swing.JPanel;
-
+import Conexion.Cliente;
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
 /**
  *
  * @author manue
@@ -15,17 +17,73 @@ import javax.swing.JPanel;
 public class Juego extends javax.swing.JPanel {
     public static String jugadorAle=new String();//variable que guarda el jugador que se genero de forma aleatoria
     public static Code MJ=new Code();//objeto para mandar a llamar metodo de mostrar jugador, lo hacemos de acceso publico para no batallar
-    /**
-     * Creates new form Juego
-     */
-    public Juego(boolean flag) {
+    private Cliente cliente;
+    private List<String> tablero;
+    private List<JButton> botonesPersonajes = new ArrayList<>();
+
+    public Juego(boolean esHost) {
         initComponents();
-        if(flag==true){
+        conectarAServidor(esHost);
+        if (esHost) {
             tablaorigin();
-        }else{
-           tablarepite();
+        } else {
+            tablarepite();
         }
     }
+
+    private void conectarAServidor(boolean esHost) {
+        try {
+            cliente = new Cliente("localhost", 12345, this);
+            tablero = cliente.getTablero();
+            generarTableroGrafico();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al conectar: " + e.getMessage(), 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void generarTableroGrafico() {
+        JPanel panelBotones = new JPanel(new GridLayout(6, 4, 5, 5));
+        
+        for (String personaje : tablero) {
+            JButton boton = crearBotonPersonaje(personaje);
+            panelBotones.add(boton);
+            botonesPersonajes.add(boton);
+        }
+        
+        this.add(panelBotones, BorderLayout.CENTER);
+        actualizarEstadoBotones();
+    }
+    
+    public void actualizarEstadoBotones() {
+        boolean habilitar = cliente != null && cliente.esMiTurno();
+        for (JButton boton : botonesPersonajes) {
+            boton.setEnabled(habilitar);
+        }
+    }
+
+    private JButton crearBotonPersonaje(String personaje) {
+        JButton boton = new JButton(personaje);
+        boton.addActionListener(e -> {
+            if (cliente.esMiTurno()) {
+                cliente.enviarPregunta("¿Tu personaje es " + personaje + "?");
+                // Lógica adicional al hacer pregunta
+            }
+        });
+        return boton;
+    }
+
+    public void actualizarEstadoTurno(boolean miTurno) {
+        SwingUtilities.invokeLater(() -> {
+            for (JButton boton : botonesPersonajes) {
+                boton.setEnabled(miTurno);
+            }
+            // Cambiar color para indicar turno
+            Color colorFondo = miTurno ? new Color(200, 255, 200) : new Color(255, 200, 200);
+            this.setBackground(colorFondo);
+        });
+    }
+       
     
     public void tablaorigin(){//funcion para imprimir el primer tablero y que se genere todo
         

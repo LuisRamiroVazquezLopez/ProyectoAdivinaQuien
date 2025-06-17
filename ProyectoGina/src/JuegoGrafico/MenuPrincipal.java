@@ -4,12 +4,14 @@
  */
 package JuegoGrafico;
 
+import Conexion.Cliente;
 import JuegoCodigo.Code;
 import JuegoCodigo.Musica;
 import JuegoCodigo.PanelTablero;
 import java.awt.BorderLayout;
 import java.util.Random;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -19,7 +21,10 @@ import javax.swing.JPanel;
 public class MenuPrincipal extends javax.swing.JFrame {
     private JPanel panelCentral;
     public static Musica musica=new Musica();
+    Cliente cliente;
     int cont;
+    public static int c;
+    private boolean listenersAgregados = false;// para evitar listeners duplicados
     /**
      * Creates new form MenuPrincipal
      */
@@ -28,7 +33,34 @@ public class MenuPrincipal extends javax.swing.JFrame {
         
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);//para que se abra en pantalla completa
 
-        musica.reproducir("/Sonido/RatDance.wav");
+        if(Musica.flag==true&&c==0){
+            musica.reproducir("/Sonido/RatDance.wav");
+            ControlMusicaBoton.setText("⏸");
+            ControlMusicaBoton.setSelected(false);
+            c++;
+        }else if(Musica.flag==true){
+            musica.continuar();
+            ControlMusicaBoton.setText("⏸");
+            ControlMusicaBoton.setSelected(false);
+        }else {
+            ControlMusicaBoton.setText("▶");
+            ControlMusicaBoton.setSelected(true);
+        }
+    }
+    
+    private void conectarAlServidor(Juego juego) {
+        String direccion = JOptionPane.showInputDialog("Ingresa la dirección del servidor:");
+        if (direccion != null && !direccion.isEmpty()) {
+            cliente = new Cliente(direccion, 12345, juego);
+        } else {
+            JOptionPane.showMessageDialog(this, "Dirección inválida. No se pudo conectar al servidor.");
+        }
+    }
+
+    private void desconectarDelServidor() {
+        if (cliente != null) {
+            cliente.cerrarConexion();
+        }
     }
 
     /**
@@ -158,21 +190,27 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
     private void JugarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JugarBotonActionPerformed
         Juego juego= new Juego(true);//creamos un obejot para enseñar el panel de juego
+        
+        cliente = new Cliente("localhost", 12345, juego); //se conecta a la base
         this.getContentPane().removeAll();                       // Limpia lo anterior
         this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
-        this.getContentPane().add(new Juego(true), BorderLayout.CENTER); // Agrega el panel
+        this.getContentPane().add(juego, BorderLayout.CENTER); // Agrega el panel
         this.revalidate();                                       // Actualiza el layout
         this.repaint();
         
         //Se pone el boton aqui porque de otra manera se acciona dos veces ya que se manda a llamar Juego 
-        Random rand=new Random();//para generar un numero random
-        PanelTablero.aleatorio.addActionListener(e->{
-            int numale=rand.nextInt(24);//genera un numero entre 0-23
-            Juego.jugadorAle=Code.imagenestablero[numale];//le guardamos a la variable el nombre del jugador que toco
-            Juego.jugadorAle=Juego.jugadorAle.replace("/JugadoresProyecto/", "").replace(".png", "");//se le quita lo que no es el nombre del jugador
-            Juego.MJ.mostrarJugador("Tu jugador es: ");
-            //System.out.println(Juego.jugadorAle);
-        });//Boton para seleccionar un jugador en aleatorio}
+        if (!listenersAgregados) {
+            Random rand=new Random();//para generar un numero random
+            PanelTablero.aleatorio.addActionListener(e->{
+                int numale=rand.nextInt(24);//genera un numero entre 0-23
+                Juego.jugadorAle=Code.imagenestablero[numale];//le guardamos a la variable el nombre del jugador que toco
+                Juego.jugadorAle=Juego.jugadorAle.replace("/JugadoresProyecto/", "").replace(".png", "");//se le quita lo que no es el nombre del jugador
+                Juego.MJ.mostrarJugador("Tu jugador es: "); 
+                if (cliente != null) {
+                    cliente.enviarMensaje("PERSONAJE_OCULTO:" + Juego.jugadorAle);
+                }
+                //System.out.println(Juego.jugadorAle);
+            });//Boton para seleccionar un jugador en aleatorio}
         
         
         
@@ -181,20 +219,25 @@ public class MenuPrincipal extends javax.swing.JFrame {
             JuegoPrincipal JP=new JuegoPrincipal();
             this.getContentPane().removeAll();                       // Limpia lo anterior
             this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
-            this.getContentPane().add(new Juego(false), BorderLayout.CENTER); // Agrega el panel
+            this.getContentPane().add(juego, BorderLayout.CENTER); // Agrega el panel
             this.revalidate();                                       // Actualiza el layout
             this.repaint();
         });//Boton para avanzar
+        
+        listenersAgregados = true;
+        }
     }//GEN-LAST:event_JugarBotonActionPerformed
 
     private void ControlMusicaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ControlMusicaBotonActionPerformed
-        if (ControlMusicaBoton.isSelected()) {
+      if (ControlMusicaBoton.isSelected()) {
             musica.pausar();
             ControlMusicaBoton.setText("▶");
+            Musica.flag=false;
         } else {
             musica.continuar();
             ControlMusicaBoton.setText("⏸");
-    }
+            Musica.flag=true;
+        }
     }//GEN-LAST:event_ControlMusicaBotonActionPerformed
 
     /**
