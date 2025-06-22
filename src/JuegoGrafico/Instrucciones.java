@@ -4,6 +4,8 @@
  */
 package JuegoGrafico;
 
+import JuegoCodigo.Musica;
+import static JuegoGrafico.MenuPrincipal.musica;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -18,6 +20,15 @@ public class Instrucciones extends javax.swing.JPanel {
      */
     public Instrucciones() {
         initComponents();
+        if(musica.estaReproduciendo()){
+            ControlMusicaBoton.setText("⏸");
+            ControlMusicaBoton.setSelected(false);
+            Musica.flag=true;
+        }else{
+            ControlMusicaBoton.setText("▶");
+            ControlMusicaBoton.setSelected(true);
+            Musica.flag=false;
+        }
     }
 
     /**
@@ -31,6 +42,7 @@ public class Instrucciones extends javax.swing.JPanel {
 
         VolverBotonPanel2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        ControlMusicaBoton = new javax.swing.JToggleButton();
 
         VolverBotonPanel2.setText("Volver");
         VolverBotonPanel2.addActionListener(new java.awt.event.ActionListener() {
@@ -41,28 +53,38 @@ public class Instrucciones extends javax.swing.JPanel {
 
         jLabel1.setText("Aqui pones las instrucciones");
 
+        ControlMusicaBoton.setText("⏸");
+        ControlMusicaBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ControlMusicaBotonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(377, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(VolverBotonPanel2)
-                        .addGap(88, 88, 88))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addContainerGap(430, Short.MAX_VALUE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(205, Short.MAX_VALUE)
+                .addComponent(VolverBotonPanel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 322, Short.MAX_VALUE)
+                .addComponent(ControlMusicaBoton)
+                .addContainerGap(205, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(67, 67, 67)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 338, Short.MAX_VALUE)
-                .addComponent(VolverBotonPanel2)
-                .addGap(49, 49, 49))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 334, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(VolverBotonPanel2)
+                    .addComponent(ControlMusicaBoton))
+                .addGap(53, 53, 53))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -74,8 +96,21 @@ public class Instrucciones extends javax.swing.JPanel {
         menuprincipal.show();//abre el panel del menu
     }//GEN-LAST:event_VolverBotonPanel2ActionPerformed
 
+    private void ControlMusicaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ControlMusicaBotonActionPerformed
+        if (ControlMusicaBoton.isSelected()) {
+            musica.pausar();
+            ControlMusicaBoton.setText("▶");
+            Musica.flag=false;
+        } else {
+            musica.continuar();
+            ControlMusicaBoton.setText("⏸");
+            Musica.flag=true;
+        }
+    }//GEN-LAST:event_ControlMusicaBotonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton ControlMusicaBoton;
     private javax.swing.JButton VolverBotonPanel2;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables

@@ -4,7 +4,7 @@
  */
 package JuegoCodigo;
 
-import JuegoGrafico.Juego;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,9 +66,9 @@ public class Code {
         }
     }
     
-    public void mostrarJugador(String mensaje){//se le manda un mensaje para poner antes del jugador, seleccionaste o te toco
+  /*  public void mostrarJugador(String mensaje){//se le manda un mensaje para poner antes del jugador, seleccionaste o te toco
         JOptionPane.showMessageDialog(null, mensaje + Juego.jugadorAle);
-    }
+    }*/
 }
 
 
