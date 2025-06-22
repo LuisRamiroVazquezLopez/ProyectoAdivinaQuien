@@ -4,7 +4,9 @@
  */
 package JuegoGrafico;
 
+import JuegoCodigo.FondoImagen;
 import JuegoCodigo.Musica;
+import static JuegoGrafico.MenuPrincipal.c;
 import static JuegoGrafico.MenuPrincipal.musica;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
@@ -14,12 +16,13 @@ import javax.swing.SwingUtilities;
  *
  * @author manue
  */
-public class Creditos extends javax.swing.JPanel {
+public class Creditos extends FondoImagen {
 
     /**
      * Creates new form Creditos
      */
     public Creditos() {
+        super("/Imagenes/creditos.png"); // Llama al constructor de FondoImagen con la ruta
         initComponents();
         if(musica.estaReproduciendo()){
             ControlMusicaBoton.setText("⏸");
@@ -41,13 +44,10 @@ public class Creditos extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         VolverBotonPanel1 = new javax.swing.JButton();
         ControlMusicaBoton = new javax.swing.JToggleButton();
 
-        jLabel1.setText("Aqui pones los creditos we, en esta pantalla");
-
-        VolverBotonPanel1.setText("Volver");
+        VolverBotonPanel1.setPreferredSize(new java.awt.Dimension(200, 80));
         VolverBotonPanel1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 VolverBotonPanel1ActionPerformed(evt);
@@ -65,27 +65,21 @@ public class Creditos extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(279, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addContainerGap(280, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(273, Short.MAX_VALUE)
-                .addComponent(VolverBotonPanel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(VolverBotonPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1000, 1000, 1000)
                 .addComponent(ControlMusicaBoton)
-                .addContainerGap(273, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(88, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(318, 318, 318)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(VolverBotonPanel1)
+                .addContainerGap(394, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(VolverBotonPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ControlMusicaBoton))
-                .addGap(51, 51, 51))
+                .addGap(22, 22, 22))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -116,6 +110,5 @@ public class Creditos extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton ControlMusicaBoton;
     private javax.swing.JButton VolverBotonPanel1;
-    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }
