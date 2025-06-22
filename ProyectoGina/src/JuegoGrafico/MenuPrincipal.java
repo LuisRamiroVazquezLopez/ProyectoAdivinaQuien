@@ -3,12 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package JuegoGrafico;
-
 import Conexion.Cliente;
 import JuegoCodigo.Code;
 import JuegoCodigo.Musica;
 import JuegoCodigo.PanelTablero;
 import java.awt.BorderLayout;
+import java.util.List;
 import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -48,20 +48,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
         }
     }
     
-    private void conectarAlServidor(Juego juego) {
-        String direccion = JOptionPane.showInputDialog("Ingresa la dirección del servidor:");
-        if (direccion != null && !direccion.isEmpty()) {
-            cliente = new Cliente(direccion, 12345, juego);
-        } else {
-            JOptionPane.showMessageDialog(this, "Dirección inválida. No se pudo conectar al servidor.");
-        }
-    }
-
-    private void desconectarDelServidor() {
-        if (cliente != null) {
-            cliente.cerrarConexion();
-        }
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -167,7 +153,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     //BOTON DE SALIR
     private void SalirBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirBotonActionPerformed
         musica.pausar();
-        dispose();//Se cierra solo ese Jframe
+        dispose();
     }//GEN-LAST:event_SalirBotonActionPerformed
     //BOTON DE CREDITOS
     private void CreditosBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreditosBotonActionPerformed
@@ -189,42 +175,56 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_InstruccionesBotonActionPerformed
 
     private void JugarBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JugarBotonActionPerformed
-        Juego juego= new Juego(true);//creamos un obejot para enseñar el panel de juego
-        
-        cliente = new Cliente("localhost", 12345, juego); //se conecta a la base
-        this.getContentPane().removeAll();                       // Limpia lo anterior
-        this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
-        this.getContentPane().add(juego, BorderLayout.CENTER); // Agrega el panel
-        this.revalidate();                                       // Actualiza el layout
+         //para pedir el nombre al jugador
+        String nombreJugador = JOptionPane.showInputDialog(this, "Introduce tu nombre:", "Nombre del Jugador", JOptionPane.PLAIN_MESSAGE);
+        if (nombreJugador == null || nombreJugador.trim().isEmpty()) {
+            nombreJugador = "Jugador";
+        }
+
+        cliente = new Cliente("localhost", 5000, null);
+        //paso la referecia del cliente
+        Juego juego = new Juego(true, cliente, nombreJugador);
+        cliente.setJuegoRef(juego);
+
+        this.getContentPane().removeAll();
+        this.getContentPane().setLayout(new BorderLayout());
+        this.getContentPane().add(juego, BorderLayout.CENTER);
+        this.revalidate();
         this.repaint();
-        
-        //Se pone el boton aqui porque de otra manera se acciona dos veces ya que se manda a llamar Juego 
+
         if (!listenersAgregados) {
-            Random rand=new Random();//para generar un numero random
-            PanelTablero.aleatorio.addActionListener(e->{
-                int numale=rand.nextInt(24);//genera un numero entre 0-23
-                Juego.jugadorAle=Code.imagenestablero[numale];//le guardamos a la variable el nombre del jugador que toco
-                Juego.jugadorAle=Juego.jugadorAle.replace("/JugadoresProyecto/", "").replace(".png", "");//se le quita lo que no es el nombre del jugador
-                Juego.MJ.mostrarJugador("Tu jugador es: "); 
-                if (cliente != null) {
-                    cliente.enviarMensaje("PERSONAJE_OCULTO:" + Juego.jugadorAle);
+            Random rand = new Random();
+
+            PanelTablero.aleatorio.addActionListener(e -> {
+                //verficacion para que el servidor si reciba al tablero
+                if (Juego.cliente.getTablero() != null && !Juego.cliente.getTablero().isEmpty()) {
+                    List<String> tablero = Juego.cliente.getTablero();
+                    int numale = rand.nextInt(tablero.size());
+                    String personajeSeleccionado = tablero.get(numale);
+
+                    //envia el personaje seleccionado al servidor
+                    Juego.cliente.seleccionarPersonaje(personajeSeleccionado);
+
+                    String rutaImagen = "/JugadoresProyecto/" + personajeSeleccionado + ".png";
+                    juego.mostrarMiPersonajeSeleccionado(personajeSeleccionado, rutaImagen);
+                    
+                    JOptionPane.showMessageDialog(this, "Has seleccionado aleatoriamente a: " + personajeSeleccionado);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Espera a que la partida se sincronice con el servidor.");
                 }
-                //System.out.println(Juego.jugadorAle);
-            });//Boton para seleccionar un jugador en aleatorio}
-        
-        
-        
-        //Boton que hace que avances para ya jugar
-        PanelTablero.avanzar.addActionListener(e->{
-            JuegoPrincipal JP=new JuegoPrincipal();
-            this.getContentPane().removeAll();                       // Limpia lo anterior
-            this.getContentPane().setLayout(new BorderLayout());     // Usa BorderLayout
-            this.getContentPane().add(juego, BorderLayout.CENTER); // Agrega el panel
-            this.revalidate();                                       // Actualiza el layout
-            this.repaint();
-        });//Boton para avanzar
-        
-        listenersAgregados = true;
+            });
+
+            PanelTablero.avanzar.addActionListener(e -> {
+                //checa que si haya elegido un jugador
+                if (juego.getMiPersonajeSeleccionado() == null || juego.getMiPersonajeSeleccionado().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Debes seleccionar un personaje antes de avanzar.", "Personaje requerido", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
+                juego.cambiarATableroJuego();
+            });
+
+            listenersAgregados = true;
         }
     }//GEN-LAST:event_JugarBotonActionPerformed
 
@@ -239,7 +239,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
             Musica.flag=true;
         }
     }//GEN-LAST:event_ControlMusicaBotonActionPerformed
-
+    
     /**
      * @param args the command line arguments
      */
