@@ -65,26 +65,31 @@ public class PanelTablero extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel panelSuperior = new JPanel(new BorderLayout());
+        panelSuperior.setOpaque(false);
         
         //boton aleatorio
         JPanel panelAleatorio = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelAleatorio.setOpaque(false);
         panelAleatorio.add(aleatorio);
         panelSuperior.add(panelAleatorio, BorderLayout.NORTH);
         
         //personaje seleccionado
         crearPanelPersonajeSeleccionado();
         panelSuperior.add(panelPersonajeSeleccionado, BorderLayout.CENTER);
+        panelPersonajeSeleccionado.setOpaque(false);
         
         add(panelSuperior, BorderLayout.NORTH);
         
         // panel para el boton de avanzar
         JPanel panelInferior = new JPanel();
+        panelInferior.setOpaque(false);
         panelInferior.setLayout(new FlowLayout(FlowLayout.RIGHT));
         panelInferior.add(avanzar);
         add(panelInferior, BorderLayout.EAST);
 
         // panel de los 24 botones de personajes
         JPanel panelBotones = new JPanel(new GridLayout(6, 4, 120, 8));
+        panelBotones.setOpaque(false);
         for (int i = 0; i < 24; i++) {
             JButton boton = new JButton();
 
@@ -132,6 +137,9 @@ public class PanelTablero extends JPanel {
             });
 
             botones[i] = boton;
+            botones[i].setOpaque(false);
+            botones[i].setContentAreaFilled(false);
+            botones[i].setBorderPainted(false);
             panelBotones.add(boton);
         }
 
@@ -145,6 +153,7 @@ public class PanelTablero extends JPanel {
      */
     private void crearPanelPersonajeSeleccionado() {
         panelPersonajeSeleccionado = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelPersonajeSeleccionado.setOpaque(false);
         panelPersonajeSeleccionado.setBorder(BorderFactory.createTitledBorder("Tu Personaje Seleccionado"));
         panelPersonajeSeleccionado.setPreferredSize(new Dimension(200, 120));
         
@@ -184,6 +193,7 @@ public class PanelTablero extends JPanel {
         
         // Panel superior con botón de pregunta y personaje seleccionado
         JPanel panelSuperior = new JPanel(new BorderLayout());
+        panelSuperior.setOpaque(false);
         
         // Botón hacer pregunta
         JPanel panelPregunta = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -210,6 +220,7 @@ public class PanelTablero extends JPanel {
         add(panelSuperior, BorderLayout.NORTH);
         
         JPanel panelBotones = new JPanel(new GridLayout(6, 4, 10, 8));
+        panelBotones.setOpaque(false);
         
         for (int i = 0; i < 24; i++) {
             JButton boton = new JButton();
@@ -217,6 +228,9 @@ public class PanelTablero extends JPanel {
             if (rutasImagenes[i] == null || rutasImagenes[i].trim().isEmpty()) {
                 boton.setText("Error: Imagen no válida");
                 botones[i] = boton;
+                botones[i].setOpaque(false);
+                botones[i].setContentAreaFilled(false);
+                botones[i].setBorderPainted(false);
                 panelBotones.add(boton);
                 continue;
             }
@@ -295,6 +309,9 @@ public class PanelTablero extends JPanel {
             });
 
             botones[i] = boton;
+            botones[i].setOpaque(false);
+            botones[i].setContentAreaFilled(false);
+            botones[i].setBorderPainted(false);
             panelBotones.add(boton);
         }
 
@@ -305,7 +322,7 @@ public class PanelTablero extends JPanel {
     
     //descarta el personaje
     private void descartarPersonajeVisualmente(JButton boton) {
-        java.net.URL urlDescartado = getClass().getResource("/JugadoresProyecto/descartado.png");
+        java.net.URL urlDescartado = getClass().getResource("/Imagenes/tarjeta_roja.png");
         if (urlDescartado != null) {
             ImageIcon iconoDescartado = new ImageIcon(urlDescartado);
             Image imagenDescartada = iconoDescartado.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
@@ -316,7 +333,7 @@ public class PanelTablero extends JPanel {
         } else {
             // Si no se encuentra la imagen de descarte
             boton.setVisible(false);
-            JOptionPane.showMessageDialog(this, "No se encontro 'descartado.png'. Personaje ocultado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No se encontro 'descartado.png'"+urlDescartado+" Personaje ocultado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
         
         this.revalidate();

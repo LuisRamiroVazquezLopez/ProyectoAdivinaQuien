@@ -8,11 +8,16 @@ package Conexion;
  *
  * @author tuntu
  */
+import BaseDeDatos.ConexionBD;
+import BaseDeDatos.PartidaBD;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+
 
 //logica de la partida
 public class Partida implements Runnable {
@@ -23,16 +28,27 @@ public class Partida implements Runnable {
     private ManejadorJugador jugadorEnTurno;
     private final List<String> tablero;
     private boolean juegoIniciado = false;
+    private final long startTime;
+    private LocalDateTime fechaInicio;
+    private int duracion;
 
     public Partida(ManejadorJugador j1, ManejadorJugador j2) {
         this.j1 = j1;
         this.j2 = j2;
         this.tablero = generarTableroAleatorio();
+        this.startTime = System.currentTimeMillis();
+        this.fechaInicio = LocalDateTime.now(); //inicio de partida
     }
 
     @Override
     public void run() {
         try {
+            // Esperar a que los nombres de los jugadores estén disponibles
+            // Este bucle ahora funcionará, porque los hilos de ManejadorJugador ya están corriendo.
+            while (j1.getNombreJugador() == null || j2.getNombreJugador() == null) {
+                Thread.sleep(100); 
+            }
+
             // asigna los numeros del jugador
             j1.enviarMensaje("NUMERO_JUGADOR:1");
             j2.enviarMensaje("NUMERO_JUGADOR:2");
@@ -42,9 +58,7 @@ public class Partida implements Runnable {
             j1.enviarMensaje("PARTIDA_EMPEZADA:" + tableroStr);
             j2.enviarMensaje("PARTIDA_EMPEZADA:" + tableroStr);
 
-            //incia los hilos de cada jugador
-            new Thread(j1).start();
-            new Thread(j2).start();
+
         } catch (Exception e) {
             System.err.println("Error al iniciar la partida: " + e.getMessage());
         }
@@ -98,6 +112,7 @@ public class Partida implements Runnable {
                 if(data.equalsIgnoreCase(personajeCorrecto)) {
                     remitente.enviarMensaje("PARTIDA_TERMINADA:VICTORIA");
                     oponente.enviarMensaje("PARTIDA_TERMINADA:DERROTA");
+                    guardarBD(remitente.getNombreJugador(), personajeCorrecto);
                 } else {
                     remitente.enviarMensaje("INFO:Adivinanza incorrecta.");
                     cambiarTurno();
@@ -135,10 +150,30 @@ public class Partida implements Runnable {
         ManejadorJugador restante = (desconectado == j1 && j2 != null) ? j2 : j1;
         if(restante != null && restante.getSocket() != null && !restante.getSocket().isClosed()) {
              restante.enviarMensaje("PARTIDA_TERMINADA:RIVAL_ABANDONA");
+             this.guardarBD(restante.getNombreJugador(), "Abandono");
         }
         System.out.println("Un jugador se ha desconectado. Finalizando partida.");
     }
 
+    private void guardarBD(String ganador, String personajeGanador) {
+        long endTime = System.currentTimeMillis();
+        int duracionSegundos = (int) ((endTime - startTime) / 1000);
+
+        PartidaBD partidaBD = new PartidaBD();
+        partidaBD.setJugador1(j1.getNombreJugador());
+        partidaBD.setJugador2(j2.getNombreJugador());
+        partidaBD.setGanador(ganador);
+        partidaBD.setPersonajeGanador(personajeGanador);
+        partidaBD.setDuracion(duracionSegundos);
+        
+        boolean exito = ConexionBD.insertarPartida(partidaBD);
+        if (exito) {
+            System.out.println("Partida guardada en la base de datos.");
+        } else {
+            System.err.println("Error al guardar la partida en la base de datos.");
+        }
+    }
+    
     private List<String> generarTableroAleatorio() {
         List<String> personajes = Arrays.asList(
             "Andres Iniesta", "Cristiano Ronaldo", "Messi", "NeymarJR",
@@ -149,18 +184,9 @@ public class Partida implements Runnable {
             "Carlos Vela", "Johan Cruyff", "Hector Herrera", "Sergio Ramos"
         );
         
-        // cree una nueva lista para evitar modificar la lista original
-        List<String> personajesAleatorios = Arrays.asList(
-            personajes.get(0), personajes.get(1), personajes.get(2), personajes.get(3),
-            personajes.get(4), personajes.get(5), personajes.get(6), personajes.get(7),
-            personajes.get(8), personajes.get(9), personajes.get(10), personajes.get(11),
-            personajes.get(12), personajes.get(13), personajes.get(14), personajes.get(15),
-            personajes.get(16), personajes.get(17), personajes.get(18), personajes.get(19),
-            personajes.get(20), personajes.get(21), personajes.get(22), personajes.get(23)
-        );
-       
+        List<String> personajesAleatorios = new ArrayList<>(personajes);
         Collections.shuffle(personajesAleatorios, new Random());
         
-        return personajesAleatorios;
+        return personajesAleatorios.subList(0, 24);
     }
 }

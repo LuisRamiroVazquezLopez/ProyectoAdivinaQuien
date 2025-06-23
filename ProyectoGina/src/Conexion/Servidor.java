@@ -29,18 +29,24 @@ public class Servidor {
             while (true) {
                 Socket socketCliente = serverSocket.accept();
                 ManejadorJugador jugador = new ManejadorJugador(socketCliente);
+                
+                // ---- INICIA EL CAMBIO ----
+                pool.execute(jugador); // ¡Inicia el hilo del jugador inmediatamente!
+                // ---- TERMINA EL CAMBIO ----
 
                 synchronized (jugadoresEnEspera) {
                     jugadoresEnEspera.add(jugador);
-                    System.out.println("Jugador conectado. Jugadores en espera: " + jugadoresEnEspera.size());
+                    System.out.println("Jugador conectado y escuchando. Jugadores en espera: " + jugadoresEnEspera.size());
 
-                    if (jugadoresEnEspera.size() == 2) {
+                    if (jugadoresEnEspera.size() >= 2) { // Usar >= 2 por seguridad
                         ManejadorJugador j1 = jugadoresEnEspera.remove(0);
                         ManejadorJugador j2 = jugadoresEnEspera.remove(0);
+                        
                         Partida partida = new Partida(j1, j2);
                         j1.setPartida(partida);
                         j2.setPartida(partida);
-                        pool.execute(partida);
+                        
+                        pool.execute(partida); // El hilo de la partida se inicia aquí
                         System.out.println("Dos jugadores emparejados. Iniciando partida.");
                     }
                 }

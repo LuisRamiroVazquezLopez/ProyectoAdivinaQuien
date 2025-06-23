@@ -4,8 +4,11 @@
  */
 package JuegoGrafico;
 
+import JuegoCodigo.FondoImagen;
 import JuegoCodigo.Musica;
 import static JuegoGrafico.MenuPrincipal.musica;
+import java.awt.Image;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -13,22 +16,56 @@ import javax.swing.SwingUtilities;
  *
  * @author manue
  */
-public class Instrucciones extends javax.swing.JPanel {
-
+public class Instrucciones extends FondoImagen {
+    //Se ponen las direcciones de las imagenes de las reglas para usar las variables despues y llamarlas
+     private static final String regla1 = "/imagenes/reglas1.png";
+    private static final String regla2 = "/imagenes/reglas2.png";
+    private static final String regla3 = "/imagenes/reglas3.png";
+    private static final String regla4 = "/imagenes/reglas4.png";
+    private static final String regla5 = "/imagenes/reglas5.png";
+    private static final String regla6 = "/imagenes/reglas6.png";
+    private static final String[] reglas = {
+        regla1, regla2, regla3, regla4, regla5, regla6
+    };
+    private int c=0;//para que haga la cuenta de en que pagina estamos
     /**
      * Creates new form Instrucciones
      */
     public Instrucciones() {
+        super(regla1); // Imagen inicial
         initComponents();
-        if(musica.estaReproduciendo()){
-            ControlMusicaBoton.setText("⏸");
+
+        ImageIcon iconoP = new ImageIcon(getClass().getResource("/Imagenes/pausa_boton.png"));
+        Image imagenP = iconoP.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        ImageIcon iconoR = new ImageIcon(getClass().getResource("/Imagenes/Reanudar_boton.png"));
+        Image imagenR = iconoR.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+
+        ControlMusicaBoton.setContentAreaFilled(false);
+        ControlMusicaBoton.setBorderPainted(false);
+        ControlMusicaBoton.setFocusPainted(false);
+        if (musica.estaReproduciendo()) {
+            ControlMusicaBoton.setIcon(new ImageIcon(imagenP));
             ControlMusicaBoton.setSelected(false);
-            Musica.flag=true;
-        }else{
-            ControlMusicaBoton.setText("▶");
+            Musica.flag = true;
+        } else {
+            ControlMusicaBoton.setIcon(new ImageIcon(imagenR));
             ControlMusicaBoton.setSelected(true);
-            Musica.flag=false;
+            Musica.flag = false;
         }
+
+        ImageIcon icono1 = new ImageIcon(getClass().getResource("/Imagenes/volver_boton.png"));
+        Image imagen1 = icono1.getImage().getScaledInstance(200, 80, Image.SCALE_SMOOTH);
+        VolverBotonPanel2.setIcon(new ImageIcon(imagen1));
+        VolverBotonPanel2.setContentAreaFilled(false);
+        VolverBotonPanel2.setBorderPainted(false);
+        VolverBotonPanel2.setFocusPainted(false);
+
+        ImageIcon icono2 = new ImageIcon(getClass().getResource("/Imagenes/continuar_boton.png"));
+        Image imagen2 = icono2.getImage().getScaledInstance(200, 80, Image.SCALE_SMOOTH);
+        SiguienteBoton.setIcon(new ImageIcon(imagen2));
+        SiguienteBoton.setContentAreaFilled(false);
+        SiguienteBoton.setBorderPainted(false);
+        SiguienteBoton.setFocusPainted(false);
     }
 
     /**
@@ -41,22 +78,27 @@ public class Instrucciones extends javax.swing.JPanel {
     private void initComponents() {
 
         VolverBotonPanel2 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         ControlMusicaBoton = new javax.swing.JToggleButton();
+        SiguienteBoton = new javax.swing.JButton();
 
-        VolverBotonPanel2.setText("Volver");
+        VolverBotonPanel2.setPreferredSize(new java.awt.Dimension(200, 80));
         VolverBotonPanel2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 VolverBotonPanel2ActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("Aqui pones las instrucciones");
-
-        ControlMusicaBoton.setText("⏸");
+        ControlMusicaBoton.setPreferredSize(new java.awt.Dimension(40, 40));
         ControlMusicaBoton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ControlMusicaBotonActionPerformed(evt);
+            }
+        });
+
+        SiguienteBoton.setPreferredSize(new java.awt.Dimension(200, 80));
+        SiguienteBoton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SiguienteBotonActionPerformed(evt);
             }
         });
 
@@ -65,53 +107,71 @@ public class Instrucciones extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(205, Short.MAX_VALUE)
-                .addComponent(VolverBotonPanel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 322, Short.MAX_VALUE)
-                .addComponent(ControlMusicaBoton)
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addGap(57, 57, 57)
+                .addComponent(VolverBotonPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
+                .addComponent(SiguienteBoton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                .addComponent(ControlMusicaBoton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(67, 67, 67)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 334, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(VolverBotonPanel2)
-                    .addComponent(ControlMusicaBoton))
+                .addContainerGap(360, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(SiguienteBoton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(VolverBotonPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ControlMusicaBoton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(53, 53, 53))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void VolverBotonPanel2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VolverBotonPanel2ActionPerformed
-        MenuPrincipal.musica.pausar();//para que no se duplique el sonido
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // obtener JFrame padre
-        frame.dispose();//cierra el panel actual
-        MenuPrincipal menuprincipal=new MenuPrincipal();
-        menuprincipal.show();//abre el panel del menu
+        c--;
+        if(c<0){
+            MenuPrincipal.musica.pausar();//para que no se duplique el sonido
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this); // obtener JFrame padre
+            frame.dispose();//cierra el panel actual
+            MenuPrincipal menuprincipal=new MenuPrincipal();
+            menuprincipal.show();//abre el panel del menu
+        }else{
+            this.setImagen(reglas[c]); // Cambia la imagen de fondo
+            repaint(); // Redibuja el panel        
+        }        
     }//GEN-LAST:event_VolverBotonPanel2ActionPerformed
 
     private void ControlMusicaBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ControlMusicaBotonActionPerformed
+        ImageIcon iconoP = new ImageIcon(getClass().getResource("/Imagenes/pausa_boton.png"));
+        Image imagenP = iconoP.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);//ajustar la imagen de acuerdo al tamaño del boton
+        //PARA REPRODUCIR
+        ImageIcon iconoR = new ImageIcon(getClass().getResource("/Imagenes/Reanudar_boton.png"));
+        Image imagenR = iconoR.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);//ajustar la imagen de acuerdo al tamaño del boton
         if (ControlMusicaBoton.isSelected()) {
             musica.pausar();
-            ControlMusicaBoton.setText("▶");
+            ControlMusicaBoton.setIcon(new ImageIcon(imagenR));
             Musica.flag=false;
         } else {
             musica.continuar();
-            ControlMusicaBoton.setText("⏸");
+            ControlMusicaBoton.setIcon(new ImageIcon(imagenP));
             Musica.flag=true;
         }
     }//GEN-LAST:event_ControlMusicaBotonActionPerformed
 
+    private void SiguienteBotonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SiguienteBotonActionPerformed
+         c++;
+        if (c >= reglas.length) {
+            c = 0; // Reinicia al llegar al final
+        }
+        
+        this.setImagen(reglas[c]); // Cambia la imagen de fondo
+        repaint(); // Redibuja el panel        
+    }//GEN-LAST:event_SiguienteBotonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton ControlMusicaBoton;
+    private javax.swing.JButton SiguienteBoton;
     private javax.swing.JButton VolverBotonPanel2;
-    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

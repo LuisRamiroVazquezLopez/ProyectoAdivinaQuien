@@ -14,7 +14,6 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingUtilities;
-import java.io.IOException;
 
 
 public class Cliente implements Runnable {
@@ -29,11 +28,13 @@ public class Cliente implements Runnable {
     private int miJugador; // 1 o 2
     private boolean conectado = false;
     private String miPersonajeSeleccionado = null;
+    private final String nombreJugador;
 
-    public Cliente(String host, int port, Juego juego) {
+    public Cliente(String host, int port, Juego juego, String nombreJugador) {
         this.host = host;
         this.port = port;
         this.juegoRef = juego;
+        this.nombreJugador = nombreJugador;
         //inicia la conexion
         new Thread(this).start();
     }
@@ -50,6 +51,9 @@ public class Cliente implements Runnable {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             conectado = true;
             
+            // Enviar el nombre del jugador al servidor
+            enviarMensaje("REGISTRAR_NOMBRE:" + this.nombreJugador);
+            
             String serverMessage;
             while ((serverMessage = in.readLine()) != null) {
                 procesarMensajeServidor(serverMessage);
@@ -59,6 +63,7 @@ public class Cliente implements Runnable {
             conectado = false;
             if (juegoRef != null) {
                 SwingUtilities.invokeLater(() -> {
+                    juegoRef.mostrarMensajeInfo("Se ha perdido la conexión con el servidor.");
                     System.err.println("Conexion perdida: " + e.getMessage());
                 });
             }

@@ -5,6 +5,7 @@
 package JuegoGrafico;
 
 import JuegoCodigo.Code;
+import JuegoCodigo.FondoImagen;
 import JuegoCodigo.PanelTablero;
 
 /**
@@ -16,7 +17,10 @@ public class JuegoPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form JuegoPrincipal
      */
-    public JuegoPrincipal() {
+    public JuegoPrincipal(){
+        FondoImagen fondo = new FondoImagen("/Imagenes/default.png");
+        fondo.setLayout(new javax.swing.GroupLayout(fondo)); // o cualquier layout que estés usando
+        setContentPane(fondo);
         initComponents();
         PanelTablero tablero = new PanelTablero();
         tablero.PTJuego(Code.imagenestablero);

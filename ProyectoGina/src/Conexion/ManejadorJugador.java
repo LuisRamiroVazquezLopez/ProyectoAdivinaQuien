@@ -20,6 +20,7 @@ public class ManejadorJugador implements Runnable {
     private Partida partida;
     private PrintWriter out;
     private BufferedReader in;
+    private String nombreJugador;
 
     public ManejadorJugador(Socket socket) {
         this.socket = socket;
@@ -29,11 +30,22 @@ public class ManejadorJugador implements Runnable {
         this.partida = partida;
     }
 
+    public String getNombreJugador() {
+        return nombreJugador;
+    }
+
     @Override
     public void run() {
         try {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            // El primer mensaje debe ser el nombre del jugador
+            String primerMensaje = in.readLine();
+            if (primerMensaje != null && primerMensaje.startsWith("REGISTRAR_NOMBRE:")) {
+                this.nombreJugador = primerMensaje.substring("REGISTRAR_NOMBRE:".length());
+                System.out.println("Nombre registrado: " + this.nombreJugador);
+            }
 
             String mensaje;
             while ((mensaje = in.readLine()) != null) {

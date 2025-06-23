@@ -6,6 +6,7 @@ package JuegoGrafico;
 import JuegoCodigo.Code;
 import JuegoCodigo.PanelTablero;
 import Conexion.Cliente;
+import JuegoCodigo.FondoImagen;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import java.util.Random;
  *
  * @author manue
  */
-    public class Juego extends javax.swing.JPanel {
+    public class Juego extends FondoImagen {
         public static Cliente cliente;
         private java.util.Timer gameTimer; 
         private int segundosTranscurridos = 0;
@@ -33,23 +34,27 @@ import java.util.Random;
         private List<String> personajesDescartados = new ArrayList<>();
         private String miPersonajeSeleccionado = null;
         private String rutaImagenPersonajeSeleccionado = null;
+        private boolean listenersAgregados = false;
 
-        public Juego(boolean esHost, Cliente cliente, String nombreJugador) {
+
+        public Juego(Cliente cliente, String nombreJugador) {
+            super("/Imagenes/default.png");
             this.cliente = cliente;
+            /*FondoImagen fondo = new FondoImagen("/Imagenes/default.png");
+            fondo.setLayout(new javax.swing.GroupLayout(fondo)); // o cualquier layout que estés usando
+            setContentPane(fondo);*/
             initComponents(); 
             configurarFecha();
             iniciarTimer(); 
             
             configurarUIPrincipal(nombreJugador);
-
-            if (cliente != null) {
-                cliente.setJuegoRef(this);
-            }
-
-            if (esHost) {
-                tablaorigin();
-            } else {
-                mostrarPanelDeEspera();
+            mostrarPanelDeEspera();
+        }
+        
+        public void setCliente(Cliente cliente) {
+            this.cliente = cliente;
+            if (this.cliente != null) {
+                this.cliente.setJuegoRef(this);
             }
         }
 
@@ -57,43 +62,45 @@ import java.util.Random;
             jLabelNombreJugador.setText("Jugador: " + nombreJugador);
             
             panelDeJuego = new JPanel(new BorderLayout());
+            panelDeJuego.setOpaque(false);
             
-            GroupLayout layout = (GroupLayout) this.getLayout();
-            
+            // Usar un layout adecuado para el panel principal 'this'
             this.setLayout(new BorderLayout());
             
-            JPanel panelSuperior = new JPanel();
-            panelSuperior.setLayout(new GridBagLayout());
+            JPanel panelSuperior = new JPanel(new GridBagLayout());
+            panelSuperior.setOpaque(false);
             GridBagConstraints gbc = new GridBagConstraints();
             
-            gbc.gridx = 0; gbc.gridy = 0; gbc.insets = new Insets(5, 5, 5, 5);
-            panelSuperior.add(estadoLabel, gbc);
-            
-            gbc.gridx = 1;
-            panelSuperior.add(turnoLabel, gbc);
-            
-            gbc.gridx = 2;
-            panelSuperior.add(jLabelFecha, gbc);
-            
-            gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 3;
-            panelSuperior.add(jLabelNombreJuego, gbc);
-            
-            gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 1;
+            gbc.insets = new Insets(5, 10, 5, 10);
+            gbc.weightx = 1.0;
+
+            gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.LINE_START;
             panelSuperior.add(jLabelNombreJugador, gbc);
             
-            gbc.gridx = 1;
+            gbc.gridx = 1; gbc.gridy = 0; gbc.anchor = GridBagConstraints.CENTER;
+            panelSuperior.add(jLabelNombreJuego, gbc);
+
+            gbc.gridx = 2; gbc.gridy = 0; gbc.anchor = GridBagConstraints.LINE_END;
+            panelSuperior.add(jLabelFecha, gbc);
+
+            gbc.gridx = 0; gbc.gridy = 1; gbc.anchor = GridBagConstraints.LINE_START;
             panelSuperior.add(jLabelPersonajePropio, gbc);
+
+            gbc.gridx = 1; gbc.gridy = 1; gbc.anchor = GridBagConstraints.CENTER;
+            panelSuperior.add(turnoLabel, gbc);
             
-            gbc.gridx = 2;
+            gbc.gridx = 2; gbc.gridy = 1; gbc.anchor = GridBagConstraints.LINE_END;
             panelSuperior.add(jLabelTimer, gbc);
             
+            gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 3; gbc.anchor = GridBagConstraints.CENTER;
+            panelSuperior.add(estadoLabel, gbc);
+
             this.add(panelSuperior, BorderLayout.NORTH);
             this.add(panelDeJuego, BorderLayout.CENTER);
         }
 
         public void iniciarJuegoConTablero(List<String> tableroServidor) {
             SwingUtilities.invokeLater(() -> {
-                // Copiar la lista del servidor a nuestras variables locales
                 personajesDisponibles.clear();
                 personajesDisponibles.addAll(tableroServidor);
                 personajesDescartados.clear();
@@ -103,6 +110,9 @@ import java.util.Random;
                     Code.imagenestablero[i] = "/JugadoresProyecto/" + tableroServidor.get(i) + ".png";
                 }
                 estadoLabel.setText("¡Partida lista! Selecciona tu personaje.");
+                
+                // Muestra el tablero de selección
+                tablaorigin();
             });
         }
         
@@ -114,7 +124,6 @@ import java.util.Random;
                 jLabelPersonajePropio.setText("Tu personaje: " + nombrePersonaje);
             });
 
-            // Si ya estás en el panel de tablero, actualizar la visualización
             if (panelTablero != null) {
                 panelTablero.mostrarPersonajeSeleccionado(nombrePersonaje, rutaImagen);
             }
@@ -125,85 +134,23 @@ import java.util.Random;
             mostrarMiPersonajeSeleccionado(nombrePersonaje, rutaImagen);
         }
         
-        public void seleccionarPersonajeAleatorio() {
-            if (personajesDisponibles == null || personajesDisponibles.isEmpty()) {
-                // Si no hay personajes disponibles del servidor, usar tablero local
-                if (cliente != null && cliente.getTablero() != null && !cliente.getTablero().isEmpty()) {
-                    List<String> tablero = cliente.getTablero();
-                    Random rand = new Random();
-                    int indiceAleatorio = rand.nextInt(tablero.size());
-                    String personajeSeleccionado = tablero.get(indiceAleatorio);
-                    
-                    // Enviar la selección al servidor y actualizar la UI local
-                    cliente.seleccionarPersonaje(personajeSeleccionado);
-                    mostrarMiPersonajeSeleccionado(personajeSeleccionado);
-                    JOptionPane.showMessageDialog(this, "Has seleccionado aleatoriamente a: " + personajeSeleccionado);
-                } else {
-                    JOptionPane.showMessageDialog(this, "No hay personajes disponibles para seleccionar.");
-                }
-                return;
-            }
-            
-            Random rand = new Random();
-            int indiceAleatorio = rand.nextInt(personajesDisponibles.size());
-            String personajeSeleccionado = personajesDisponibles.get(indiceAleatorio);
-            
-            // Enviar la selección al servidor y actualizar la UI local
-            if (cliente != null) {
-                cliente.seleccionarPersonaje(personajeSeleccionado);
-            }
-            mostrarMiPersonajeSeleccionado(personajeSeleccionado);
-            JOptionPane.showMessageDialog(this, "Has seleccionado aleatoriamente a: " + personajeSeleccionado);
-        }
-        
         public void descartarPersonaje(String nombrePersonaje) {
             if (!personajesDisponibles.contains(nombrePersonaje)) {
                 return; // Ya esta descartado
             }
             
-            // Verificar si es mi personaje seleccionado
             if (nombrePersonaje.equals(miPersonajeSeleccionado)) {
-                // Solo permitir intento de victoria si es mi turno
-                if (miTurno) {
-                    int respuesta = JOptionPane.showConfirmDialog(this,
-                        "¿Estás seguro de que el oponente eligió a " + nombrePersonaje + "?\n" +
-                        "Si estás correcto, ¡GANAS! Si te equivocas, PIERDES.",
-                        "¡Intento de Victoria!",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-                    
-                    if (respuesta == JOptionPane.YES_OPTION) {
-                        // Enviar intento de victoria al servidor
-                        if (cliente != null) {
-                            cliente.intentarGanar(nombrePersonaje);
-                        }
-                        return;
-                    }
-                } else {
-                    // No es mi turno solo mostrar advertencia pero permitir descartar
-                    int respuesta = JOptionPane.showConfirmDialog(this,
-                        "Estás a punto de descartar tu propio personaje (" + nombrePersonaje + ").\n" +
-                        "No es tu turno, así que no puedes intentar ganar ahora.\n" +
-                        "¿Estás seguro de que quieres descartarlo?",
-                        "Advertencia - Descartando tu personaje",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-                    
-                    if (respuesta != JOptionPane.YES_OPTION) {
-                        return; // Cancelar el descarte
-                    }
-                }
+                 JOptionPane.showMessageDialog(this, "No puedes descartar a tu propio personaje.", "Acción no válida", JOptionPane.WARNING_MESSAGE);
+                 return;
             }
             
             personajesDisponibles.remove(nombrePersonaje);
             personajesDescartados.add(nombrePersonaje);
             
-            // evia el descarte al servidor
-            if (!nombrePersonaje.equals(miPersonajeSeleccionado) && cliente != null) {
+            if (cliente != null) {
                 cliente.descartarPersonaje(nombrePersonaje);
             }
             
-
             actualizarTableroVisual();
         }
         
@@ -219,15 +166,10 @@ import java.util.Random;
         
         private void actualizarTableroVisual() {
             SwingUtilities.invokeLater(() -> {
-                // recrea el tablero con los personajes actualizados
                 if (panelTablero != null) {
                     panelTablero.actualizarPersonajesDescartados(personajesDescartados);
                 }
             });
-        }
-
-        public void setMiTurno(boolean esMiTurno) {
-            this.miTurno = esMiTurno;
         }
 
         private void iniciarTimer() {
@@ -255,44 +197,29 @@ import java.util.Random;
 
         private void mostrarPanelDeEspera() {
             panelDeJuego.removeAll();
-            JLabel labelEspera = new JLabel("Esperando a otro jugador...", SwingConstants.CENTER);
-            labelEspera.setFont(new Font("Arial", Font.BOLD, 18));
+            JLabel labelEspera = new JLabel("Buscando partida...", SwingConstants.CENTER);
+            labelEspera.setFont(new Font("Arial", Font.BOLD, 24));
             panelDeJuego.add(labelEspera, BorderLayout.CENTER);
             panelDeJuego.revalidate();
             panelDeJuego.repaint();
         }
 
         public void tablaorigin() {
-            Code code = new Code();
-            code.cargarImagenes();
-            code.llenarVector();
-            
-            if (Code.imagenestablero == null || Code.imagenestablero.length == 0) {
-                System.err.println("Error: Code.imagenestablero esta vacio o es null");
-                // Crear un tablero de prueba si no existe
-                Code.imagenestablero = new String[24];
-                for (int i = 0; i < 24; i++) {
-                    Code.imagenestablero[i] = "/JugadoresProyecto/default.png"; // Imagen por defecto
-                }
-            }
-
             panelTablero = new PanelTablero(); 
             panelTablero.PTSelec(Code.imagenestablero);
+            
+            if (!listenersAgregados) {
+                agregarListenersSeleccion();
+                listenersAgregados = true;
+            }
+            
             panelDeJuego.removeAll();
             panelDeJuego.add(panelTablero, BorderLayout.CENTER);
             panelDeJuego.revalidate();
             panelDeJuego.repaint();
-
-            this.revalidate();
-            this.repaint();
         }
 
         public void tablarepite() {
-            if (Code.imagenestablero == null || Code.imagenestablero.length == 0) {
-                System.err.println("Error: Code.imagenestablero no está disponible para el juego");
-                return;
-            }
-            
             if (panelTablero == null) {
                 panelTablero = new PanelTablero(); 
             }
@@ -302,8 +229,6 @@ import java.util.Random;
             panelDeJuego.add(panelTablero, BorderLayout.CENTER);
             panelDeJuego.revalidate();
             panelDeJuego.repaint();
-            this.revalidate();
-            this.repaint();
         }
 
         public void cambiarATableroJuego() {
@@ -311,30 +236,56 @@ import java.util.Random;
                 JOptionPane.showMessageDialog(this, "Debes seleccionar un personaje primero.", "Error", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            // cambiar al panel de juego
             tablarepite();
-
-            // mantiene el personaje seleccionado visible en el nuevo panel
             if (rutaImagenPersonajeSeleccionado != null && panelTablero != null) {
                 panelTablero.mostrarPersonajeSeleccionado(miPersonajeSeleccionado, rutaImagenPersonajeSeleccionado);
                 panelTablero.setMiPersonajeSeleccionado(miPersonajeSeleccionado);
             }
         }
 
-        public void actualizarEstadoJuego(boolean miTurno, String mensaje) {
+        public void actualizarEstadoJuego(boolean esMiTurno, String mensaje) {
             SwingUtilities.invokeLater(() -> {
-                this.miTurno = miTurno; 
+                this.miTurno = esMiTurno; 
                 estadoLabel.setText(mensaje);
-                turnoLabel.setText(miTurno ? "¡ES TU TURNO!" : "Turno del oponente");
-                turnoLabel.setForeground(miTurno ? new Color(0, 128, 0) : Color.RED);
+                turnoLabel.setText(esMiTurno ? "¡ES TU TURNO!" : "Turno del oponente");
+                turnoLabel.setForeground(esMiTurno ? new Color(0, 128, 0) : Color.RED);
+                turnoLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            });
+        }
+        
+        private void agregarListenersSeleccion() {
+            Random rand = new Random();
+
+            PanelTablero.aleatorio.addActionListener(e -> {
+                if (cliente.getTablero() != null && !cliente.getTablero().isEmpty()) {
+                    List<String> tablero = cliente.getTablero();
+                    int numale = rand.nextInt(tablero.size());
+                    String personajeSeleccionado = tablero.get(numale);
+
+                    cliente.seleccionarPersonaje(personajeSeleccionado);
+                    
+                    String rutaImagen = "/JugadoresProyecto/" + personajeSeleccionado + ".png";
+                    mostrarMiPersonajeSeleccionado(personajeSeleccionado, rutaImagen);
+                    
+                    JOptionPane.showMessageDialog(this, "Has seleccionado aleatoriamente a: " + personajeSeleccionado);
+                } else {
+                    JOptionPane.showMessageDialog(this, "El tablero aún no está listo.");
+                }
+            });
+
+            PanelTablero.avanzar.addActionListener(e -> {
+                if (getMiPersonajeSeleccionado() == null || getMiPersonajeSeleccionado().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Debes seleccionar un personaje antes de avanzar.", "Personaje requerido", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                cambiarATableroJuego();
             });
         }
 
         public void mostrarPreguntaOponente(String pregunta) {
             SwingUtilities.invokeLater(() -> {
                 int n = JOptionPane.showConfirmDialog(this,
-                    pregunta, "Pregunta del Oponente", JOptionPane.YES_NO_OPTION);
+                    pregunta, "Pregunta del Oponente", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 String respuesta = (n == JOptionPane.YES_OPTION) ? "SI" : "NO";
                 cliente.enviarRespuesta(respuesta);
             });
@@ -358,36 +309,65 @@ import java.util.Random;
             });
         }
         
-
         public void manejarFinJuego(String resultado) {
             detenerTimer();
             SwingUtilities.invokeLater(() -> {
                 boolean victoria = false;
+                String mensajeFinal = "";
                 switch (resultado) {
                     case "VICTORIA":
                         victoria = true;
+                        //mensajeFinal = "¡Has ganado la partida!";
                         break;
                     case "DERROTA":
                         victoria = false;
+                        //mensajeFinal = "Has perdido. ¡Mejor suerte la próxima!";
                         break;
                     case "RIVAL_ABANDONA":
                         victoria = true;
+                        mensajeFinal = "Tu rival ha abandonado la partida. ¡Has ganado!";
                         break;
                 }
-                mostrarPantallaFin(victoria);
+                mostrarPantallaFin(victoria, mensajeFinal);
             });
         }
 
-        private void mostrarPantallaFin(boolean esVictoria) {
-            this.removeAll();
-            this.setLayout(new BorderLayout());
+        private void mostrarPantallaFin(boolean esVictoria, String mensaje) {
+    // Obtener el JFrame padre
+    JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
 
-            JInternalFrame pantallaFinal = esVictoria ? new PantallaVictoria() : new PantallaDerrota();
-            this.add(pantallaFinal.getContentPane(), BorderLayout.CENTER);
+    if (frame != null) {
+        frame.getContentPane().removeAll(); // Eliminar todo el contenido de la ventana
 
-            this.revalidate();
-            this.repaint();
-        }
+        JPanel panelFinal = esVictoria ? new PantallaVictoria() : new PantallaDerrota();
+
+        // Botón para volver al menú
+        JButton menuButton = new JButton("Volver al Menú Principal");
+        menuButton.addActionListener(e -> {
+        MenuPrincipal.musica.pausar();//para que no se duplique el sonido
+        frame.dispose(); // Cierra el JFrame actual
+
+        // Crea un nuevo JFrame con el menú principal
+        MenuPrincipal nuevoMenu = new MenuPrincipal();
+        nuevoMenu.setVisible(true); // Muestra el nuevo menú con todo correctamente configurado
+        });
+
+        // Agrega el botón a la parte inferior del panel final
+        panelFinal.setLayout(new BorderLayout());
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setOpaque(false);
+        bottomPanel.add(menuButton);
+        panelFinal.add(bottomPanel, BorderLayout.SOUTH);
+
+        frame.getContentPane().add(panelFinal); // Agrega el panel final al frame
+        frame.revalidate();
+        frame.repaint();
+    } else {
+        System.err.println("No se encontró el JFrame padre.");
+    }
+}
+
+
         
         private void configurarFecha() {
             LocalDate fechaActual = LocalDate.now();
@@ -400,24 +380,11 @@ import java.util.Random;
         }
         
         public void mostrarMensajeInfo(String mensaje) {
-
-            System.out.println("INFO: " + mensaje);
-        }//temporal lo tengo que arreglar pero ya me dio hueva o nose
+            JOptionPane.showMessageDialog(this, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
        
         public String getMiPersonajeSeleccionado() {
             return miPersonajeSeleccionado;
-        }
-        
-        public List<String> getPersonajesDisponibles() {
-            return new ArrayList<>(personajesDisponibles);
-        }
-        
-        public List<String> getPersonajesDescartados() {
-            return new ArrayList<>(personajesDescartados);
-        }
-
-        public String getRutaImagenPersonajeSeleccionado() {
-            return rutaImagenPersonajeSeleccionado;
         }
 
 
